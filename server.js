@@ -18,8 +18,11 @@ app.get("/:room", (req,res) => {
 
 io.on('connection', socket => {
   socket.on('join-room', (roomId, userId) => {
-    console.log(roomId, userId)
+    socket.join(roomId)
+    io.to(roomId).emit('user-connected', userId)
+
+    socket.on("disconnect", () => {
+      io.to(roomId).emit('user-disconnected', userId)
+    })
   })
 })
-
-server.listen(3000)
